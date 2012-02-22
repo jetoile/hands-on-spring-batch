@@ -17,7 +17,7 @@ Voici quelques rêgles métier à respecter:
 
 * Il faudra être attentif à ne pas importer (Skip) des données non conformes, c'est à dire s'il existe des données ne respectant pas la structure de données si dessus
 * Il faudra exclure les employées nés avant 1952
-* Il faudra s'assurer que le champs "gender" ne soit que "F" ou "M"
+* Il faudra s'assurer que le champs "gender" ne soit que "F" ou "M"     sinon skipper
 
 Une fois, les données conformes, il faudra les écrire dans la base de données dans la table EMPLOYEES à l'aide JDBC.
 

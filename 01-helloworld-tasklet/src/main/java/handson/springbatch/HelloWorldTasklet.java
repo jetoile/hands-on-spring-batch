@@ -10,16 +10,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class HelloWorldTasklet implements Tasklet {
-	Logger logger = LoggerFactory.getLogger(HelloWorldTasklet.class);
+    Logger logger = LoggerFactory.getLogger(HelloWorldTasklet.class);
 
-	@Override
-	public RepeatStatus execute(StepContribution contribution,
-			ChunkContext chunkContext) throws Exception {
-		// TODO : afficher "hello world" with slf4j
+    @Override
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        logger.warn("hello world");
 
-		// TODO : indiquer que le processus est fini
+        // TODO : afficher "hello world" with slf4j
 
-		throw new RuntimeException("TODO: not yet implemented");
-	}
+        // TODO : indiquer que le processus est fini
+
+        return null;
+    }
 
 }

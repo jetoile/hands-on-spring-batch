@@ -1,29 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context" xmlns:batch="http://www.springframework.org/schema/batch"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-	<!-- Reader -->
-	<!-- TODO : implementer/réutiliser le reader pour lire le XML salaries -->
-	<bean id="reader2" class="handson.springbatch.reader.NoopItemReader" scope="step">
-	</bean>
+    <!-- Reader -->
+    <!-- TODO : implementer/réutiliser le reader pour lire le XML salaries -->
+    <bean id="reader2" class="org.springframework.batch.item.xml.StaxEventItemReader" scope="step">
+        <property name="resource" value="#{jobParameters['datafileSalaries']}"/>
+        <property name="unmarshaller">
+            <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+                <property name="aliases">
+                    <map>
+                        <entry key="salary" value="handson.springbatch.model.Salary"/>
+                    </map>
+                </property>
+                <property name="converters">
+                    <list>
+                        <bean class="com.thoughtworks.xstream.converters.basic.DateConverter">
+                            <constructor-arg value="yyyy-MM-dd HH"/>
+                            <constructor-arg>
+                                <list>
+                                    <value>yyyy-MM-dd</value>
+                                </list>
+                            </constructor-arg>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="fragmentRootElementName" value="salary"></property>
+    </bean>
 
-	<!-- Processor -->
-	<bean id="processor2" class="org.springframework.batch.item.support.CompositeItemProcessor">
-		<property name="delegates">
-			<list>
-				<!-- TODO : supprimer ce bean PassThroughItemProcessor -->
-				<!-- TODO : ajouter vos propres ItemProcessor pour gere les regles de gestion -->
-				<bean class="org.springframework.batch.item.support.PassThroughItemProcessor" />
-			</list>
-		</property>
-	</bean>
+    <!-- Processor -->
+    <bean id="processor2" class="org.springframework.batch.item.support.CompositeItemProcessor">
+        <property name="delegates">
+            <list>
+                <!-- TODO : supprimer ce bean PassThroughItemProcessor -->
+                <!-- TODO : ajouter vos propres ItemProcessor pour gere les regles de gestion -->
+                <bean class="org.springframework.batch.item.support.PassThroughItemProcessor"/>
+                <bean class="handson.springbatch.processor.UUIDProcessor"/>
+                <bean class="handson.springbatch.processor.IdValidatorProcessor">
+                </bean>
+            </list>
+        </property>
+    </bean>
 
-	<!-- Writer -->
-	<!-- TODO : implementer/reutiliser le writer pour ecrire dans la base en JDBC -->
-	<bean id="writer2" class="handson.springbatch.writer.NoopItemWriter">
-	</bean>
+    <!-- Writer -->
+    <!-- TODO : implementer/reutiliser le writer pour ecrire dans la base en JDBC -->
+    <!--<bean id="writer2" class="handson.springbatch.writer.NoopItemWriter">-->
+    <!--</bean>-->
+
+    <bean id="writer2" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="sql"
+                  value="INSERT INTO SALARIES(id, emp_no, amount, from_date, to_date) VALUES(:id, :employeeId, :amount, :fromDate, :toDate)"/>
+        <property name="itemSqlParameterSourceProvider">
+            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider"/>
+        </property>
+    </bean>
+
 
 </beans>

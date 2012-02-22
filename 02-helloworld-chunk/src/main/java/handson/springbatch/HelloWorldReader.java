@@ -14,12 +14,22 @@ import com.google.common.collect.Lists;
 public class HelloWorldReader implements ItemReader<String> {
 	private List<String> names = Lists.newArrayList("Aaron", "Abel", "Adam", "Alban", "Alberto", "Alexandre", "Alfred");
 
-	@Override
+    private int i = 0;
+
+    @Override
 	public String read() throws Exception, UnexpectedInputException,
 			ParseException, NonTransientResourceException {
-		// TODO : returner les elements un par un, une fois fini, renovuer null
-		
-		throw new RuntimeException("TODO: not yet implemented");
+
+        if (names.size() == 0) {
+            return null;
+        }
+        return names.remove(i);
+////        i++;
+//        return s;
+//
+////		// TODO : returner les elements un par un, une fois fini, renovuer null
+////
+////		throw new RuntimeException("TODO: not yet implemented");
 	}
 
 }
